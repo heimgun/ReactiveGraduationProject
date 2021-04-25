@@ -1,18 +1,23 @@
 package se.newton.stockpriceclient
 
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Test
 import org.springframework.web.reactive.function.client.WebClient
+import kotlin.test.assertEquals
+import kotlin.test.Test
 
-internal class WebClientStockClientTest {
+class WebClientStockClientTest {
   private val webClient = WebClient.builder().build()
+
   @Test
-  fun retrieveStockPricesFromTheService() {
+  fun `retrieve stock prices from the service`() {
+		// Arrange
     val webClientStockClient = WebClientStockClient(webClient)
+
+		// Act
     val prices = webClientStockClient.pricesFor("SYMBOL")
-    Assertions.assertNotNull(prices)
     val fivePrices = prices.take(5)
-    Assertions.assertEquals(5, fivePrices.count().block())
-    Assertions.assertEquals("SYMBOL", fivePrices.blockFirst().symbol)
+
+		// Assert
+    assertEquals(5, fivePrices.count().block())
+		assertEquals("SYMBOL", fivePrices.blockFirst()?.symbol)
   }
 }
