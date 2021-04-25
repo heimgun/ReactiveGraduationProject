@@ -62,6 +62,7 @@ dependencies {
 
   // Other
   implementation("io.projectreactor:reactor-core:3.4.3")
+	implementation("com.algorand:algosdk:1.5.1")
 
   // Tests
   testImplementation("io.projectreactor:reactor-test:3.4.3")
