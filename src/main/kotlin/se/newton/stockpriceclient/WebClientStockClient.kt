@@ -3,7 +3,7 @@ package se.newton.stockpriceclient
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Flux
 import reactor.util.retry.Retry
-import utils.getLogger
+import se.newton.stockpriceclient.utils.getLogger
 import java.io.IOException
 import java.time.Duration
 
