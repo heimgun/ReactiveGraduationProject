@@ -1,5 +1,4 @@
-package com.example.JavaStockPriceClient;
-
+package se.newton.JavaStockPriceClient;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,10 +10,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class StockPrice {
-
-    private String symbol;
-    private Double price;
-    private LocalDateTime time;
-
-
+	private String symbol;
+	private Double price;
+	private LocalDateTime time;
 }
