@@ -54,6 +54,7 @@ configurations {
 dependencies {
   // Spring
   implementation("org.springframework.boot:spring-boot-starter-webflux")
+	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
   // Kotlin
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
