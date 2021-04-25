@@ -1,0 +1,3 @@
+spring:
+  application.name: Stock Price Client
+  output.ansi.enabled: always
