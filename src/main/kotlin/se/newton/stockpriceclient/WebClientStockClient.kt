@@ -7,6 +7,7 @@ import se.newton.stockpriceclient.utils.getLogger
 import java.io.IOException
 import java.time.Duration
 
+// TODO Find some relevant place to put this
 class WebClientStockClient(private val webClient: WebClient) {
 	private val logger = getLogger<WebClientStockClient>()
 
