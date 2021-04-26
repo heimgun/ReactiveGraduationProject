@@ -42,10 +42,12 @@ class AlgodServiceImpl(
 
 	override fun getBlockNumberFlux(): Flux<Long> =
 		getStatus()
-			.flatMapMany { generateSequence(it.lastRound - 1) { round -> round + 1 }.toFlux() }
-			.map {
-				algod.WaitForBlock(it).execute().extractOrFail().lastRound.also {
-					nextNumber -> println(nextNumber)
-				}
+			.flatMapMany { nodeStatusResponse ->
+				val startRound = nodeStatusResponse.lastRound - 1
+				val sequence = generateSequence(startRound) { it + 1 }
+				return@flatMapMany sequence.toFlux()
+			}.map { nextRound ->
+				algod.WaitForBlock(nextRound).execute().extractOrFail().lastRound
+					.also { println(it) }
 			}
 }

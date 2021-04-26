@@ -1,5 +1,6 @@
 package se.newton.stockpriceclient.controller.rest
 
+import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -29,6 +30,8 @@ class AlgodController(
 	@GetMapping("/block/next")
 	fun getNextBlock() = algod.getNextBlock()
 
-	@GetMapping("/block/number-flux")
+	@GetMapping(
+		value = ["/block/number-flux"],
+		produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
 	fun getBlockNumberFlux() = algod.getBlockNumberFlux()
 }
