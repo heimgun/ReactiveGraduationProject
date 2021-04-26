@@ -54,6 +54,7 @@ configurations {
 dependencies {
   // Spring
   implementation("org.springframework.boot:spring-boot-starter-webflux")
+	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
   // Kotlin
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
@@ -62,6 +63,7 @@ dependencies {
 
   // Other
   implementation("io.projectreactor:reactor-core:3.4.3")
+	implementation("com.algorand:algosdk:1.5.1")
 
   // Tests
   testImplementation("io.projectreactor:reactor-test:3.4.3")

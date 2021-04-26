@@ -1,3 +1,7 @@
 spring:
   application.name: Stock Price Client
   output.ansi.enabled: always
+algod:
+  url: ${ALGOD_URL}
+  port: ${ALGOD_PORT}
+  token: ${ALGOD_TOKEN}
