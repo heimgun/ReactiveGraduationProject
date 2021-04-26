@@ -28,4 +28,7 @@ class AlgodController(
 
 	@GetMapping("/block/next")
 	fun getNextBlock() = algod.getNextBlock()
+
+	@GetMapping("/block/number-flux")
+	fun getBlockNumberFlux() = algod.getBlockNumberFlux()
 }
