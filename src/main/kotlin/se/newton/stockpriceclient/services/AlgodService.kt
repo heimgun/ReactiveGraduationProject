@@ -5,7 +5,7 @@ import com.algorand.algosdk.v2.client.model.BlockResponse
 import com.algorand.algosdk.v2.client.model.NodeStatusResponse
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import se.newton.stockpriceclient.controller.rest.models.SimpleTransactionBlock
+import se.newton.stockpriceclient.controller.rest.models.ShortBlockSummary
 
 interface AlgodService {
 	fun getAccountInformation(wallet: String): Mono<Account>
@@ -14,5 +14,5 @@ interface AlgodService {
 	fun getLatestBlockNumber(): Mono<Long>
 	fun getNextBlock(): Mono<BlockResponse>
 	fun getBlockNumberFlux(): Flux<Long>
-	fun getSimpleTransactionFlux(): Flux<SimpleTransactionBlock>
+	fun getShortBlockSummaryFlux(): Flux<ShortBlockSummary>
 }

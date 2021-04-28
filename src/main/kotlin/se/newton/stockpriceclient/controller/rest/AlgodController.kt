@@ -36,7 +36,7 @@ class AlgodController(
 	fun getBlockNumberFlux() = algod.getBlockNumberFlux()
 
 	@GetMapping(
-		value = ["/block/tx-flux"],
+		value = ["/block/summary-flux"],
 		produces = [MediaType.APPLICATION_NDJSON_VALUE])
-	fun getTxFlux() = algod.getSimpleTransactionFlux()
+	fun getTxFlux() = algod.getShortBlockSummaryFlux()
 }
