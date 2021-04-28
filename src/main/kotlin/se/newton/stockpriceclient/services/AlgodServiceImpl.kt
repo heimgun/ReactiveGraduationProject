@@ -9,9 +9,8 @@ import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toFlux
-import se.newton.stockpriceclient.controller.rest.models.SimpleTransactionBlock
+import se.newton.stockpriceclient.controller.rest.models.ShortBlockSummary
 import se.newton.stockpriceclient.utils.extractOrFail
-import java.time.Duration
 
 @Service
 class AlgodServiceImpl(
@@ -56,18 +55,18 @@ class AlgodServiceImpl(
 					.also { println(it) }
 			}
 
-	override fun getSimpleTransactionFlux(): Flux<SimpleTransactionBlock> {
+	override fun getShortBlockSummaryFlux(): Flux<ShortBlockSummary> {
 		return getBlockNumbersStartingNow()
 			.map { nextRound ->
 				algod.WaitForBlock(nextRound).execute()
-				val nextBlock = algod.GetBlock(nextRound).execute().extractOrFail().block
-				val transactions = (nextBlock["txns"] ?: listOf<Any>()) as List<*>
+				val nextBlock = algod.GetBlock(nextRound).execute().extractOrFail()
+				val transactions = (nextBlock.block["txns"] ?: listOf<Any>()) as List<*>
+				val netName = (nextBlock.block["gen"] ?: "unknown") as String
 
-				return@map SimpleTransactionBlock(
-					proposer = "Kalle Anka", // TODO find out how to extract proposer, seems to be under cert => prop somewhere
+				return@map ShortBlockSummary(
+					net = netName,
 					transactions = transactions.size,
-					round = nextRound
-				)
+					round = nextRound)
 			}
 	}
 }
