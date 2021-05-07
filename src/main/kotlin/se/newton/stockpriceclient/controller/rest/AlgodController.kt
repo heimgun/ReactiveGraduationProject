@@ -29,8 +29,16 @@ class AlgodController(
 		produces = [MediaType.APPLICATION_NDJSON_VALUE])
 	fun getStatusFlux() = algod.getStatusResponseFlux()
 
+	@GetMapping(
+		value = ["/block-flux"],
+		produces = [MediaType.APPLICATION_NDJSON_VALUE])
+	fun getBlockFlux() = algod.getBlockResponseFlux()
+
 	@GetMapping("/block/latest")
 	fun getLastBlock() = algod.getLatestBlock()
+
+	@GetMapping("/block/latest/number")
+	fun getLastBlockNumber() = algod.getLatestBlockNumber()
 
 	@GetMapping("/block/next")
 	fun getNextBlock() = algod.getNextBlock()

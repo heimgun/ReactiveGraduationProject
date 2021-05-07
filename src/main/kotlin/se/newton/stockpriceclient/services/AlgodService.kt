@@ -16,4 +16,5 @@ interface AlgodService {
 	fun getNextBlock(): Mono<BlockResponse>
 	fun getBlockNumberFlux(): Flux<Long>
 	fun getShortBlockSummaryFlux(): Flux<ShortBlockSummary>
+	fun getBlockResponseFlux(): Flux<BlockResponse>
 }

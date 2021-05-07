@@ -6,7 +6,6 @@ import com.algorand.algosdk.v2.client.model.Account
 import com.algorand.algosdk.v2.client.model.BlockResponse
 import com.algorand.algosdk.v2.client.model.NodeStatusResponse
 import org.springframework.stereotype.Service
-import reactor.core.publisher.ConnectableFlux
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toFlux
@@ -17,16 +16,23 @@ import se.newton.stockpriceclient.utils.extractOrFail
 class AlgodServiceImpl(
 	val algod: AlgodClient
 ) : AlgodService {
-	private val lastResponseFlux: ConnectableFlux<NodeStatusResponse> =
-		getBlockNumbersStartingNow()
-			.map {
-				val lol = algod.WaitForBlock(it).execute().extractOrFail()
-				println(lol.lastRound)
-				return@map lol
-			}
-			.cache(1)
-			.publish()
-			.also { println("SUP BRAH") }
+	private val lastResponseFlux: Flux<NodeStatusResponse> =
+		algod.GetStatus()
+			.execute()
+			.extractOrFail()
+			.let { Mono.justOrEmpty(it) }
+			.flatMapMany { nodeStatusResponse ->
+				val startRound = nodeStatusResponse.lastRound - 1
+				val firstBlock = algod.WaitForBlock(startRound).execute().extractOrFail()
+				return@flatMapMany generateSequence(firstBlock) {
+					val nextRound = it.lastRound
+					return@generateSequence algod.WaitForBlock(nextRound).execute().extractOrFail()
+				}.toFlux()
+			}.cache(1)
+			.share()
+
+	private val lastBlockFlux: Flux<BlockResponse> =
+		lastResponseFlux.map { algod.GetBlock(it.lastRound).execute().extractOrFail() }
 
 	private fun getBlockNumbersStartingNow(): Flux<Long> =
 		getStatus()
@@ -36,24 +42,25 @@ class AlgodServiceImpl(
 				return@flatMapMany sequence.toFlux()
 			}
 
-	override fun getStatusResponseFlux(): Flux<NodeStatusResponse> =
-		lastResponseFlux.autoConnect().cache(1)
+	override fun getStatusResponseFlux(): Flux<NodeStatusResponse> = lastResponseFlux
 
-	override fun getAccountInformation(wallet: String): Mono<Account> {
-		val response = algod.AccountInformation(Address(wallet)).execute()
-		return Mono.justOrEmpty(response.extractOrFail())
-	}
+	override fun getBlockResponseFlux(): Flux<BlockResponse> = lastBlockFlux
 
-	override fun getStatus(): Mono<NodeStatusResponse> {
-		val response = algod.GetStatus().execute()
-		return Mono.justOrEmpty(response.extractOrFail())
-	}
+	override fun getAccountInformation(wallet: String): Mono<Account> =
+		algod.AccountInformation(Address(wallet))
+			.execute()
+			.extractOrFail()
+			.let { Mono.justOrEmpty(it) }
 
-	override fun getLatestBlock(): Mono<BlockResponse> =
-		getStatus().map { algod.GetBlock(it.lastRound).execute().extractOrFail() }
+	final override fun getStatus(): Mono<NodeStatusResponse> =
+		algod.GetStatus()
+			.execute()
+			.extractOrFail()
+			.let { Mono.justOrEmpty(it) }
 
-	override fun getLatestBlockNumber(): Mono<Long> =
-		getStatus().map { it.lastRound }
+	override fun getLatestBlock(): Mono<BlockResponse> = lastBlockFlux.last()
+
+	override fun getLatestBlockNumber(): Mono<Long> = lastResponseFlux.take(2).last().map { it.lastRound }
 
 	override fun getNextBlock(): Mono<BlockResponse> =
 		getStatus()
@@ -70,18 +77,14 @@ class AlgodServiceImpl(
 					.also { println(it) }
 			}
 
-	override fun getShortBlockSummaryFlux(): Flux<ShortBlockSummary> {
-		return getBlockNumbersStartingNow()
-			.map { nextRound ->
-				algod.WaitForBlock(nextRound).execute()
-				val nextBlock = algod.GetBlock(nextRound).execute().extractOrFail()
-				val transactions = (nextBlock.block["txns"] ?: listOf<Any>()) as List<*>
-				val netName = (nextBlock.block["gen"] ?: "unknown") as String
+	override fun getShortBlockSummaryFlux(): Flux<ShortBlockSummary> =
+		lastBlockFlux.map {
+			val transactions = (it.block["txns"] ?: listOf<Any>()) as List<*>
+			val netName = (it.block["gen"] ?: "unknown") as String
 
-				return@map ShortBlockSummary(
-					net = netName,
-					transactions = transactions.size,
-					round = nextRound)
-			}
-	}
+			return@map ShortBlockSummary(
+				net = netName,
+				transactions = transactions.size,
+				round = it.block["rnd"] as Int)
+		}
 }
