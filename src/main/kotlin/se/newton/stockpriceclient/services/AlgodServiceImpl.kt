@@ -34,17 +34,9 @@ class AlgodServiceImpl(
 	private val lastBlockFlux: Flux<BlockResponse> =
 		lastResponseFlux.map { algod.GetBlock(it.lastRound).execute().extractOrFail() }
 
-	private fun getBlockNumbersStartingNow(): Flux<Long> =
-		getStatus()
-			.flatMapMany { nodeStatusResponse ->
-				val startRound = nodeStatusResponse.lastRound - 1
-				val sequence = generateSequence(startRound) { it + 1 }
-				return@flatMapMany sequence.toFlux()
-			}
-
 	override fun getStatusResponseFlux(): Flux<NodeStatusResponse> = lastResponseFlux
-
 	override fun getBlockResponseFlux(): Flux<BlockResponse> = lastBlockFlux
+	override fun getBlockNumberFlux(): Flux<Long> = lastResponseFlux.map { it.lastRound }
 
 	override fun getAccountInformation(wallet: String): Mono<Account> =
 		algod.AccountInformation(Address(wallet))
@@ -68,13 +60,6 @@ class AlgodServiceImpl(
 				val nextBlock = it.lastRound + 1
 				val newRound = algod.WaitForBlock(nextBlock).execute().extractOrFail().lastRound
 				return@map algod.GetBlock(newRound).execute().extractOrFail()
-			}
-
-	override fun getBlockNumberFlux(): Flux<Long> =
-		getBlockNumbersStartingNow()
-			.map { nextRound ->
-				algod.WaitForBlock(nextRound).execute().extractOrFail().lastRound
-					.also { println(it) }
 			}
 
 	override fun getShortBlockSummaryFlux(): Flux<ShortBlockSummary> =
