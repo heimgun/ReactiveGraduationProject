@@ -6,6 +6,7 @@ import com.algorand.algosdk.v2.client.model.Account
 import com.algorand.algosdk.v2.client.model.BlockResponse
 import com.algorand.algosdk.v2.client.model.NodeStatusResponse
 import org.springframework.stereotype.Service
+import reactor.core.publisher.ConnectableFlux
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toFlux
@@ -16,6 +17,17 @@ import se.newton.stockpriceclient.utils.extractOrFail
 class AlgodServiceImpl(
 	val algod: AlgodClient
 ) : AlgodService {
+	private val lastResponseFlux: ConnectableFlux<NodeStatusResponse> =
+		getBlockNumbersStartingNow()
+			.map {
+				val lol = algod.WaitForBlock(it).execute().extractOrFail()
+				println(lol.lastRound)
+				return@map lol
+			}
+			.cache(1)
+			.publish()
+			.also { println("SUP BRAH") }
+
 	private fun getBlockNumbersStartingNow(): Flux<Long> =
 		getStatus()
 			.flatMapMany { nodeStatusResponse ->
@@ -23,6 +35,9 @@ class AlgodServiceImpl(
 				val sequence = generateSequence(startRound) { it + 1 }
 				return@flatMapMany sequence.toFlux()
 			}
+
+	override fun getStatusResponseFlux(): Flux<NodeStatusResponse> =
+		lastResponseFlux.autoConnect().cache(1)
 
 	override fun getAccountInformation(wallet: String): Mono<Account> {
 		val response = algod.AccountInformation(Address(wallet)).execute()

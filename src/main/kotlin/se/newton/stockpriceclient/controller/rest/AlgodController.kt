@@ -24,6 +24,11 @@ class AlgodController(
 	@GetMapping("/status")
 	fun getStatus() = algod.getStatus()
 
+	@GetMapping(
+		value = ["/status-flux"],
+		produces = [MediaType.APPLICATION_NDJSON_VALUE])
+	fun getStatusFlux() = algod.getStatusResponseFlux()
+
 	@GetMapping("/block/latest")
 	fun getLastBlock() = algod.getLatestBlock()
 
