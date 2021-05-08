@@ -7,7 +7,7 @@ package se.newton.stockpriceclient.controller.rest.models
  */
 data class ShortBlockSummary(
 	val net: String,
-	val round: Long,
+	val round: Int,
 	val transactions: Int,
 ) {
 }

@@ -8,6 +8,7 @@ import reactor.core.publisher.Mono
 import se.newton.stockpriceclient.controller.rest.models.ShortBlockSummary
 
 interface AlgodService {
+	fun getStatusResponseFlux(): Flux<NodeStatusResponse>
 	fun getAccountInformation(wallet: String): Mono<Account>
 	fun getStatus(): Mono<NodeStatusResponse>
 	fun getLatestBlock(): Mono<BlockResponse>
@@ -15,4 +16,5 @@ interface AlgodService {
 	fun getNextBlock(): Mono<BlockResponse>
 	fun getBlockNumberFlux(): Flux<Long>
 	fun getShortBlockSummaryFlux(): Flux<ShortBlockSummary>
+	fun getBlockResponseFlux(): Flux<BlockResponse>
 }
