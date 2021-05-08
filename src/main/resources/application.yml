@@ -5,3 +5,6 @@ algod:
   url: ${ALGOD_URL}
   port: ${ALGOD_PORT}
   token: ${ALGOD_TOKEN}
+  indexer:
+    url: ${ALGOD_URL}
+    port: ${INDEXER_PORT}
