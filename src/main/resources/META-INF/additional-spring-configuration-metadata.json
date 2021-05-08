@@ -8,11 +8,24 @@
 		{
 			"name": "algod.port",
 			"type": "java.lang.String",
-			"description": "The port for the Algorand node."
+			"description": "The port for the Algorand node.",
+			"defaultValue": "8080"
 		},
 		{
 			"name": "algod.token",
-			"type": "java.lang.String",
+			"type": "java.lang.Integer",
 			"description": "The token for the Algorand node."
+		},
+		{
+			"name": "algod.indexer.url",
+			"type": "java.lang.String",
+			"description": "The URL for the Algorand indexer."
+		},
+		{
+			"name": "algod.indexer.port",
+			"type": "java.lang.Integer",
+			"description": "Description for algod.indexer.port.",
+			"defaultValue": "8980"
 		}
-	] }
+	]
+}
