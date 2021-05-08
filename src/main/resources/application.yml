@@ -4,7 +4,7 @@ spring:
 algod:
   url: ${ALGOD_URL}
   port: ${ALGOD_PORT}
-  token: ${ALGOD_TOKEN}
+  token: # intentionally left empty as it's not needed for algoexplorer's API
   indexer:
-    url: ${ALGOD_URL}
+    url: ${INDEXER_URL}
     port: ${INDEXER_PORT}

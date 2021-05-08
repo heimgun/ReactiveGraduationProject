@@ -7,14 +7,15 @@
 		},
 		{
 			"name": "algod.port",
-			"type": "java.lang.String",
+			"type": "java.lang.Integer",
 			"description": "The port for the Algorand node.",
-			"defaultValue": "8080"
+			"defaultValue": 8080
 		},
 		{
 			"name": "algod.token",
-			"type": "java.lang.Integer",
-			"description": "The token for the Algorand node."
+			"type": "java.lang.String",
+			"description": "The token for the Algorand node.",
+			"defaultValue": ""
 		},
 		{
 			"name": "algod.indexer.url",
@@ -25,7 +26,7 @@
 			"name": "algod.indexer.port",
 			"type": "java.lang.Integer",
 			"description": "Description for algod.indexer.port.",
-			"defaultValue": "8980"
+			"defaultValue": 8980
 		}
 	]
 }
