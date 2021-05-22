@@ -15,9 +15,3 @@ to specify that in `src/resources/application.yml` (preferably as yet another en
 We're also assuming that you're using the AlgoExplorer API which doesn't require a token. If you're
 running your own node you will need to change this in tha `application.yml` as well. This value should
 most definitely be an environmental variable.
-
-## Newton Bucks
-The application will also have some integration specific to the asset Newton Bucks (NEWB) which is
-created on the test net. The asset ID for this is specified through the properties file.
-
-The specific integrations with Newton Bucks are TBD.
