@@ -25,8 +25,7 @@ class AlgodServiceImpl(
 				val startRound = nodeStatusResponse.lastRound - 1
 				val firstBlock = algod.WaitForBlock(startRound).execute().extractOrFail()
 				return@flatMapMany generateSequence(firstBlock) {
-					val nextRound = it.lastRound
-					return@generateSequence algod.WaitForBlock(nextRound).execute().extractOrFail()
+					algod.WaitForBlock(it.lastRound).execute().extractOrFail()
 				}.toFlux()
 			}.cache(1)
 			.share()
